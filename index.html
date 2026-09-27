@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cómo funciona el Habit Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #081410;
+    --bg-2: #0d1c16;
+    --panel: #0f231b;
+    --line: #1c3a2c;
+    --green-1: #245c40;
+    --green-2: #3f9e6a;
+    --green-3: #6ee3a0;
+    --green-bright: #9dffc3;
+    --text: #eaf5ee;
+    --text-dim: #a9c4b4;
+    --text-faint: #6f8b7c;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,.display{ font-family: 'Sora', sans-serif; letter-spacing: -0.01em; }
+  a{color:inherit;}
+  img{display:block; max-width:100%; border-radius:14px;}
+  .wrap{ max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  nav{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(8,20,16,0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height: 64px; }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size: 1.05rem; }
+  .brand-dot{ width:10px;height:10px;border-radius:2px; background: var(--green-3); box-shadow: 0 0 12px var(--green-3); }
+  .nav-cta{
+    background: var(--green-3); color: #06140d; font-weight:600; font-size: 0.9rem;
+    padding: 9px 18px; border-radius: 6px; text-decoration:none;
+    transition: transform .15s ease, box-shadow .15s ease; white-space: nowrap;
+  }
+  .nav-cta:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px rgba(110,227,160,0.25);}
+
+  .bridge{
+    text-align:center;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+    background: rgba(110,227,160,0.05);
+  }
+  .bridge p{ color: var(--text-dim); font-size: 0.92rem; }
+  .bridge b{ color: var(--green-3); }
+
+  header.hero{ padding: 60px 0 50px; border-bottom: 1px solid var(--line); text-align:center; }
+  .kicker{
+    display:inline-block; color: var(--green-3); font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; border: 1px solid var(--green-1);
+    background: rgba(110,227,160,0.06); padding: 6px 14px; border-radius: 100px; margin-bottom: 22px;
+  }
+  h1.title{
+    font-size: clamp(1.9rem, 4.8vw, 2.9rem); font-weight: 800; line-height: 1.15;
+    max-width: 760px; margin: 0 auto 20px;
+  }
+  h1.title span{ color: var(--green-3); }
+  .subtitle{ color: var(--text-dim); font-size: 1.05rem; max-width: 600px; margin: 0 auto; }
+
+  section{ padding: 64px 0; border-bottom: 1px solid var(--line); }
+  section.no-border{ border-bottom:none; }
+  .section-head{ max-width: 640px; margin-bottom: 36px; }
+  .section-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+  .eyebrow{
+    color: var(--green-3); font-weight:600; font-size:0.82rem; letter-spacing:0.1em;
+    text-transform:uppercase; margin-bottom: 12px; display:block;
+  }
+  h2{ font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 700; margin-bottom: 14px; }
+  .section-head p{ color: var(--text-dim); font-size: 1.02rem; }
+
+  .explain-block{
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 34px 36px; max-width: 760px; margin: 0 auto;
+  }
+  .explain-block p{ color: var(--text-dim); margin-bottom: 14px; font-size: 1.03rem; }
+  .explain-block p:last-child{ margin-bottom:0; }
+  .explain-block .analogy{
+    background: rgba(110,227,160,0.06); border-left: 3px solid var(--green-3);
+    padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 18px 0; color: var(--text);
+  }
+
+  .one-liner{ text-align:center; max-width: 700px; margin: 0 auto; }
+  .one-liner .big-claim{
+    font-family:'Sora', sans-serif; font-weight:800;
+    font-size: clamp(1.3rem, 3.4vw, 1.8rem);
+    line-height:1.35; color: var(--text);
+  }
+  .one-liner .big-claim span{ color: var(--green-3); }
+  .one-liner p.small{ color: var(--text-dim); margin-top:16px; font-size:0.95rem; }
+
+  .feature-row{ display:grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items:center; }
+  .feature-row.reverse .feature-text{ order:2; }
+  .feature-row.reverse .feature-img{ order:1; }
+  .feature-img{ background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 14px; }
+  .feature-img img{ border-radius: 12px; }
+  .feature-text .step-num{
+    color: var(--green-3); font-family:'Sora',sans-serif; font-weight:800; font-size: 0.95rem;
+    letter-spacing:0.05em; margin-bottom: 10px; display:block;
+  }
+  .feature-text h3{ font-family:'Sora',sans-serif; font-size: 1.35rem; font-weight:700; margin-bottom: 12px; }
+  .feature-text p{ color: var(--text-dim); }
+  .feature-text .tag-simple{
+    display:inline-block; margin-top:14px; background: rgba(110,227,160,0.1); color: var(--green-3);
+    font-size: 0.82rem; font-weight:700; padding: 6px 12px; border-radius: 100px;
+  }
+
+  @media (max-width: 820px){
+    .feature-row, .feature-row.reverse{ grid-template-columns: 1fr; }
+    .feature-row.reverse .feature-text, .feature-row.reverse .feature-img,
+    .feature-row .feature-text, .feature-row .feature-img{ order:initial; }
+    .explain-block{ padding: 26px 22px; }
+  }
+  .feature-gap{ height: 70px; }
+
+  .persona-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .persona-card{ background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 26px 24px; }
+  .persona-card .persona-for{
+    color: var(--green-3); font-weight:700; font-size: 0.85rem; text-transform:uppercase;
+    letter-spacing:0.04em; margin-bottom:10px; display:block;
+  }
+  .persona-card p{ color: var(--text-dim); font-size: 0.97rem; }
+  @media (max-width: 700px){ .persona-grid{ grid-template-columns: 1fr; } }
+
+  .cta-final{ text-align:center; padding: 76px 0 90px; }
+  .cta-final h2{ margin-bottom: 14px; }
+  .cta-final p{ color: var(--text-dim); max-width: 520px; margin: 0 auto 30px; }
+  .btn-big{
+    display:inline-block; background: var(--green-3); color: #06140d; font-weight:700; font-size: 1rem;
+    padding: 15px 32px; border-radius: 8px; text-decoration:none;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-big:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(110,227,160,0.28); }
+
+  footer{ padding: 28px 0 40px; text-align:center; color: var(--text-faint); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="brand-dot"></span> Habit Tracker</div>
+    <a class="nav-cta" href="https://habit-tracker-futuristic.netlify.app/">Quiero el mío</a>
+  </div>
+</nav>
+
+<div class="bridge">
+  <div class="wrap">
+    <p>Ya viste <b>por qué</b> la inconsistencia te cuesta caro. Ahora te mostramos <b>cómo se resuelve</b>, en simple.</p>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">Cómo funciona</span>
+    <h1 class="title">No necesitás fuerza de voluntad de más. <span>Necesitás verlo.</span></h1>
+    <p class="subtitle">El Habit Tracker es la forma más simple de dejar de adivinar si estás progresando — y empezar a verlo, día a día, con datos reales.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="eyebrow">Para empezar</span>
+      <h2>¿Qué es, exactamente?</h2>
+    </div>
+    <div class="explain-block">
+      <p>Es un archivo (funciona en Excel o Google Sheets) donde anotás los hábitos que querés sostener — estudiar, entrenar, tomar agua, lo que sea — y cada día marcás si los cumpliste o no.</p>
+      <div class="analogy">Es como la cartilla del gimnasio donde te sellaban cada clase a la que ibas. Pero para cualquier cosa que quieras convertir en costumbre, no solo para el gimnasio.</div>
+      <p>La diferencia con anotarlo en un papel o "llevarlo en la cabeza" es que acá, cada tilde que ponés se convierte automáticamente en un número, un gráfico, una racha — sin que vos tengas que calcular nada.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="one-liner">
+      <p class="big-claim">Vos solo <span>ponés el hábito y tildás</span>. El resto — el porcentaje, la racha, el gráfico de progreso — se arma solo.</p>
+      <p class="small">Nada de fórmulas, nada de configurar. Un tilde por día es toda la acción que hace falta de tu parte.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="eyebrow">Paso a paso</span>
+      <h2>Así se ve por dentro</h2>
+      <p>Tres vistas, un mismo archivo: el registro diario, el detalle semana por semana, y el panel general con tus estadísticas.</p>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-img">
+        <img src="images/img1_crop.jpg" alt="Vista del Tracker con hábitos marcados">
+      </div>
+      <div class="feature-text">
+        <span class="step-num">01 — TRACKER</span>
+        <h3>Ponés tus hábitos. Tildás el día. Ya está.</h3>
+        <p>Cada fila es un hábito, cada columna un día del mes. No hay nada más que hacer de tu lado — el archivo calcula solo, en tiempo real, cuánto llevás cumplido de cada uno.</p>
+        <span class="tag-simple">✓ La única acción diaria: tildar</span>
+      </div>
+    </div>
+
+    <div class="feature-gap"></div>
+
+    <div class="feature-row reverse">
+      <div class="feature-img">
+        <img src="images/img3.jpg" alt="Seguimiento semanal con gráficos de dona por día">
+      </div>
+      <div class="feature-text">
+        <span class="step-num">02 — SEMANA</span>
+        <h3>Cómo te fue, de un vistazo</h3>
+        <p>Elegís la semana y ves un gráfico por cada día, con la lista exacta de qué cumpliste y qué te quedó pendiente — ideal para revisar cómo te fue sin tener que leer toda la grilla.</p>
+      </div>
+    </div>
+
+    <div class="feature-gap"></div>
+
+    <div class="feature-row">
+      <div class="feature-img">
+        <img src="images/img2_crop.jpg" alt="Dashboard general con evolución mensual del cumplimiento">
+      </div>
+      <div class="feature-text">
+        <span class="step-num">03 — DASHBOARD</span>
+        <h3>Tu progreso, en un solo panel</h3>
+        <p>Hábitos totales, cuántos completaste, tu racha actual y tu feeling promedio — más un gráfico de evolución que te muestra si vas para arriba o para abajo, mes a mes.</p>
+        <p>Nada de "sensación" de que estás siendo constante: acá lo ves reflejado en números y curvas reales.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="no-border">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="eyebrow">¿Para quién es?</span>
+      <h2>Para cualquiera que esté tratando de sostener algo</h2>
+    </div>
+    <div class="persona-grid">
+      <div class="persona-card">
+        <span class="persona-for">Para vos, estudiante</span>
+        <p>Que necesitás organizar tus materias, repartir el estudio entre parciales y no llegar siempre a último momento.</p>
+      </div>
+      <div class="persona-card">
+        <span class="persona-for">Para vos, que trabajás</span>
+        <p>Que necesitás acomodar el trabajo con la familia y el tiempo propio, sin que uno le coma el lugar al otro.</p>
+      </div>
+      <div class="persona-card">
+        <span class="persona-for">Para vos, que entrenás</span>
+        <p>Que sabés lo que hay que hacer, pero necesitás ver la racha para no cortarla justo cuando menos ganas tenés.</p>
+      </div>
+      <div class="persona-card">
+        <span class="persona-for">Para vos, que estás cambiando de hábitos</span>
+        <p>Que estás dejando algo atrás o construyendo algo nuevo, y necesitás una prueba de que sí estás avanzando, aunque sea de a poco.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final no-border">
+  <div class="wrap">
+    <h2>¿Listo para probarlo?</h2>
+    <p>Es un pago único, sin suscripción. Funciona en Excel y en Google Sheets.</p>
+    <a class="btn-big" href="https://habit-tracker-futuristic.netlify.app/">Ver cómo conseguirlo</a>
+  </div>
+</section>
+
+<footer>
+  Habit Tracker Verde Futurista · @nexuz.lionheart
+</footer>
+
+</body>
+</html>
